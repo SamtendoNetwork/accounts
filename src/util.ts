@@ -129,15 +129,13 @@ export function nascError(errorCode: string): URLSearchParams {
 export async function sendConfirmationEmail(pnid: mongoose.HydratedDocument<IPNID, IPNIDMethods>): Promise<void> {
 	const email = new CreateEmail()
 		.addHeader('Hello {{pnid}}!', { pnid: pnid.username })
-		.addParagraph('Your <b>Pretendo Network ID</b> activation is almost complete. Please click the link below to confirm your e-mail address and complete the activation process.')
-		.addButton('Confirm email address', `https://api.pretendo.cc/v1/email/verify?token=${pnid.identification.email_token}`)
-		.addParagraph('You may also enter the following 6-digit code on your console:')
+		.addParagraph('Your <b>Samtendo Network ID</b> activation is almost complete. Please enter the following code on your console to complete the verification.')
 		.addButton(pnid.identification.email_code, '', false)
 		.addParagraph('We hope you have fun using our services!');
 
 	const options = {
 		to: pnid.email.address,
-		subject: '[Pretendo Network] Please confirm your email address',
+		subject: '[Samtendo Network] Please confirm your email address',
 		email
 	};
 
@@ -148,11 +146,11 @@ export async function sendEmailConfirmedEmail(pnid: mongoose.HydratedDocument<IP
 	const email = new CreateEmail()
 		.addHeader('Dear {{pnid}}!', { pnid: pnid.username })
 		.addParagraph('Your email address has been confirmed.')
-		.addParagraph('We hope you have fun on Pretendo Network!');
+		.addParagraph('We hope you have fun on Samtendo Network!');
 
 	const options = {
 		to: pnid.email.address,
-		subject: '[Pretendo Network] Email address confirmed',
+		subject: '[Samtendo Network] Email address confirmed',
 		email
 	};
 
@@ -166,7 +164,7 @@ export async function sendEmailConfirmedParentalControlsEmail(pnid: mongoose.Hyd
 
 	const options = {
 		to: pnid.email.address,
-		subject: '[Pretendo Network] Email address confirmed for Parental Controls',
+		subject: '[Samtendo Network] Email address confirmed for Parental Controls',
 		email
 	};
 
@@ -196,7 +194,7 @@ export async function sendForgotPasswordEmail(pnid: mongoose.HydratedDocument<IP
 
 	const mailerOptions = {
 		to: pnid.email.address,
-		subject: '[Pretendo Network] Forgot Password',
+		subject: '[Samtendo Network] Forgot Password',
 		email
 	};
 
@@ -213,15 +211,14 @@ export async function sendPNIDDeletedEmail(emailAddress: string, username: strin
 	});
 	const email = new CreateEmail()
 		.addHeader('Dear {{pnid}}.', { pnid: username })
-		.addParagraph('Your PNID has been scheduled for deletion.')
+		.addParagraph('Your SNID has been scheduled for deletion.')
 		.addParagraph(`Your account and related data will be permanently deleted in 7 days (${deletionDate}). Note that this will not free the username associated with the account for use in future accounts.`)
-		.addParagraph('You may restore your account at any time before the deletion date. To do so, email [restore-account@pretendo.network](mailto:restore-account@pretendo.network?subject=Requesting%20account%20restore&body=Please%20restore%20my%20account) from the email address used to register, with the subject "Requesting account restore" and your PNID username in the body. Requests must be submitted more than 24 hours before the deletion date, as after this point your data may be unrecoverable. For additional help, visit our [Forum](https://forum.pretendo.network/) or [Discord server](https://discord.pretendo.network/).')
-		.addParagraph('If you have or have had an active tier subscription, your associated Stripe data (including payment info and invoices) will be permanently deleted on the deletion date and cannot be restored.')
-		.addParagraph('No new charges will be made during the grace period, even if a renewal would normally occur. If your account is restored with an active subscription, you may need to resubscribe. If you notice unexpected charges during the grace period, please contact us via our [Forum](https://forum.pretendo.network/) or [Discord server](https://discord.pretendo.network/) before the deletion date.');
+		.addParagraph('You may restore your account at any time before the deletion date. To do so, email [help@samtendo.net](mailto:help@samtendo.net?subject=Requesting%20account%20restore&body=Please%20restore%20my%20account) from the email address used to register, with the subject "Requesting account restore" and your SNID username in the body. Requests must be submitted more than 24 hours before the deletion date, as after this point your data may be unrecoverable. For additional help, visit our [Discord server](https://discord.samtendo.net/).')
+		.addParagraph('No new charges will be made during the grace period, even if a renewal would normally occur. If your account is restored with an active subscription, you may need to resubscribe. If you notice unexpected charges during the grace period, please contact us via our [Discord server](https://discord.samtendo.net/) before the deletion date.');
 
 	const options = {
 		to: emailAddress,
-		subject: '[Pretendo Network] PNID Deletion',
+		subject: '[Samtendo Network] SNID Deletion',
 		email
 	};
 

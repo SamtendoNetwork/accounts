@@ -51,10 +51,12 @@ export const config: Config = {
 		}
 	},
 	email: {
-		ses: {
-			region: process.env.PN_ACT_CONFIG_EMAIL_SES_REGION || '',
-			key: process.env.PN_ACT_CONFIG_EMAIL_SES_ACCESS_KEY || '',
-			secret: process.env.PN_ACT_CONFIG_EMAIL_SES_SECRET_KEY || ''
+		smtp: {
+			host: process.env.PN_ACT_CONFIG_EMAIL_HOST || '',
+			port: Number(process.env.PN_ACT_CONFIG_EMAIL_PORT || ''),
+			secure: process.env.PN_ACT_CONFIG_EMAIL_SECURE === 'true',
+			username: process.env.PN_ACT_CONFIG_EMAIL_USERNAME || '',
+			password: process.env.PN_ACT_CONFIG_EMAIL_PASSWORD || ''
 		},
 		from: process.env.PN_ACT_CONFIG_EMAIL_FROM || ''
 	},
@@ -93,14 +95,14 @@ export const config: Config = {
 		signature_secret: process.env.PN_ACT_CONFIG_DATASTORE_SIGNATURE_SECRET || ''
 	},
 	domains: {
-		api: (process.env.PN_ACT_CONFIG_DOMAINS_API || 'api.pretendo.cc').split(','),
-		assets: (process.env.PN_ACT_CONFIG_DOMAINS_ASSETS || 'assets.pretendo.cc').split(','),
-		cbvc: (process.env.PN_ACT_CONFIG_DOMAINS_CBVC || 'cbvc.cdn.pretendo.cc').split(','),
-		conntest: (process.env.PN_ACT_CONFIG_DOMAINS_CONNTEST || 'conntest.pretendo.cc').split(','),
-		datastore: (process.env.PN_ACT_CONFIG_DOMAINS_DATASTORE || 'datastore.pretendo.cc').split(','),
+		api: (process.env.PN_ACT_CONFIG_DOMAINS_API || 'api.samtendo.net').split(','),
+		assets: (process.env.PN_ACT_CONFIG_DOMAINS_ASSETS || 'assets.samtendo.net').split(','),
+		cbvc: (process.env.PN_ACT_CONFIG_DOMAINS_CBVC || 'cbvc.cdn.samtendo.net').split(','),
+		conntest: (process.env.PN_ACT_CONFIG_DOMAINS_CONNTEST || 'conntest.samtendo.net').split(','),
+		datastore: (process.env.PN_ACT_CONFIG_DOMAINS_DATASTORE || 'datastore.samtendo.net').split(','),
 		local_cdn: (process.env.PN_ACT_CONFIG_DOMAINS_LOCAL_CDN || '').split(','),
-		nasc: (process.env.PN_ACT_CONFIG_DOMAINS_NASC || 'nasc.pretendo.cc').split(','),
-		nnas: (process.env.PN_ACT_CONFIG_DOMAINS_NNAS || 'c.account.pretendo.cc,account.pretendo.cc').split(',')
+		nasc: (process.env.PN_ACT_CONFIG_DOMAINS_NASC || 'nasc.samtendo.net').split(','),
+		nnas: (process.env.PN_ACT_CONFIG_DOMAINS_NNAS || 'c.account.samtendo.net,account.samtendo.net').split(',')
 	},
 	discourse: {
 		forum_url: process.env.PN_ACT_CONFIG_DISCOURSE_FORUM_URL || '',
@@ -170,18 +172,23 @@ if (!config.redis.client.url) {
 	disabledFeatures.redis = true;
 }
 
-if (!config.email.ses.region) {
-	LOG_WARN('Failed to find AWS SES region. Disabling feature. To enable feature set the PN_ACT_CONFIG_EMAIL_SES_REGION environment variable');
+if (!config.email.smtp.host) {
+	LOG_WARN('Failed to find email SMTP host. Disabling feature. To enable feature set the PN_ACT_CONFIG_EMAIL_HOST environment variable');
 	disabledFeatures.email = true;
 }
 
-if (!config.email.ses.key) {
-	LOG_WARN('Failed to find AWS SES access key. Disabling feature. To enable feature set the PN_ACT_CONFIG_EMAIL_SES_ACCESS_KEY environment variable');
+if (!config.email.smtp.port) {
+	LOG_WARN('Failed to find email SMTP port. Disabling feature. To enable feature set the PN_ACT_CONFIG_EMAIL_PORT environment variable');
 	disabledFeatures.email = true;
 }
 
-if (!config.email.ses.secret) {
-	LOG_WARN('Failed to find AWS SES secret key. Disabling feature. To enable feature set the PN_ACT_CONFIG_EMAIL_SES_SECRET_KEY environment variable');
+if (!config.email.smtp.username) {
+	LOG_WARN('Failed to find email SMTP username. Disabling feature. To enable feature set the PN_ACT_CONFIG_EMAIL_USERNAME environment variable');
+	disabledFeatures.email = true;
+}
+
+if (!config.email.smtp.password) {
+	LOG_WARN('Failed to find email SMTP password. Disabling feature. To enable feature set the PN_ACT_CONFIG_EMAIL_PASSWORD environment variable');
 	disabledFeatures.email = true;
 }
 

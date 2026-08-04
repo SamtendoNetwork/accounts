@@ -1,7 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import nodemailer from 'nodemailer';
-import * as aws from '@aws-sdk/client-ses';
 import { encode } from 'he';
 import { config, disabledFeatures } from '@/config-manager';
 import type { MailerOptions } from '@/types/common/mailer-options';
@@ -11,19 +10,13 @@ const genericEmailTemplate = fs.readFileSync(path.join(__dirname, './assets/emai
 let transporter: nodemailer.Transporter;
 
 if (!disabledFeatures.email) {
-	const ses = new aws.SES({
-		apiVersion: '2010-12-01',
-		region: config.email.ses.region,
-		credentials: {
-			accessKeyId: config.email.ses.key,
-			secretAccessKey: config.email.ses.secret
-		}
-	});
-
 	transporter = transporter = nodemailer.createTransport({
-		SES: {
-			ses,
-			aws
+		host: config.email.smtp.host,
+		port: config.email.smtp.port,
+		secure: config.email.smtp.secure,
+		auth: {
+			user: config.email.smtp.username,
+			pass: config.email.smtp.password
 		}
 	});
 }
@@ -112,7 +105,7 @@ export class CreateEmail {
 					if (plainText) {
 						tempText = tempText.replace(/{{pnid}}/g, safeValue);
 					} else {
-						tempText = tempText.replace(/{{pnid}}/g, `<span class="shoutout" style="color:#cab1fb;">${safeValue}</span>`);
+						tempText = tempText.replace(/{{pnid}}/g, `<span class="shoutout" style="color:#A8D5F7;">${safeValue}</span>`);
 					}
 				}
 			});
@@ -169,7 +162,7 @@ export class CreateEmail {
 					} else {
 						el = `<span style="color:#fff;" width="100%">${c.text}</span>`;
 					}
-					innerHTML += `\n<tr><td ${c.primary ? 'class="primary button" bgcolor="#673db6"' : 'class="secondary button" bgcolor="#373C65"'} style="font-weight:700;border-radius:10px;padding:12px" align="center">${this.addGmailDarkModeFix(el)}</td></tr>`;
+					innerHTML += `\n<tr><td ${c.primary ? 'class="primary button" bgcolor="#5BA3D0"' : 'class="secondary button" bgcolor="#3D5F80"'} style="font-weight:700;border-radius:10px;padding:12px" align="center">${this.addGmailDarkModeFix(el)}</td></tr>`;
 					break;
 			}
 		});
@@ -209,10 +202,10 @@ export class CreateEmail {
 		});
 
 		// the signature is baked into the template, so it needs to be added manually to the plaintext version
-		plainText += '\n\n- The Pretendo Network team';
+		plainText += '\n\n- The Samtendo Network team';
 
 		// and so is the notice about the email being auto-generated
-		plainText += '\n\nNote: This is an automatic email; please do not respond. For assistance, please visit https://forum.pretendo.network.';
+		plainText += '\n\nNote: this email message was auto-generated, please do not respond. For further assistance, please join our Discord server: https://discord.samtendo.net.';
 
 		plainText = plainText.replace(/(<([^>]+)>)/gi, '');
 

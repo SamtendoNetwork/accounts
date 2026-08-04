@@ -22,10 +22,12 @@ export interface Config {
 		};
 	};
 	email: {
-		ses: {
-			region: string;
-			key: string;
-			secret: string;
+		smtp: {
+			host: string;
+			port: number;
+			secure: boolean;
+			username: string;
+			password: string;
 		};
 		from: string;
 	};
