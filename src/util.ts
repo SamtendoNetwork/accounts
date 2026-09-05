@@ -20,6 +20,26 @@ import type { SafeQs } from '@/types/common/safe-qs';
 import type { HydratedServerDocument } from '@/types/mongoose/server';
 import type { ServiceTokenOptions } from '@/types/common/service-token-options';
 
+function getWebhookURL(): string | undefined {
+	const filePath = path.join(process.cwd(), 'webhooks.env');
+
+	if (!fs.existsSync(filePath)) {
+		return undefined;
+	}
+
+	const contents = fs.readFileSync(filePath, 'utf8');
+
+	for (const line of contents.split(/\r?\n/)) {
+		const trimmed = line.trim();
+
+		if (trimmed.startsWith('STAFF_WEBHOOK=')) {
+			return trimmed.slice('STAFF_WEBHOOK='.length).trim();
+		}
+	}
+
+	return undefined;
+}
+
 let s3: S3;
 
 if (!disabledFeatures.s3) {
@@ -140,6 +160,38 @@ export async function sendConfirmationEmail(pnid: mongoose.HydratedDocument<IPNI
 	};
 
 	await sendMail(options);
+}
+
+export async function sendStaffWebhook(
+	pnid: mongoose.HydratedDocument<IPNID, IPNIDMethods>
+): Promise<void> {
+	const webhookURL = getWebhookURL();
+
+	if (!webhookURL) {
+		console.warn('Staff webhook URL not found. Skipping webhook notification. To fix add a Discord webhook to webhooks.env as STAFF_WEBHOOK');
+		return;
+	}
+
+	try {
+		await fetch(webhookURL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				embeds: [
+					{
+						title: 'New SNID created',
+						description: `A new Samtendo Network ID has been created: **${pnid.username}**`,
+						color: 0x00b0f4,
+						timestamp: new Date().toISOString()
+					}
+				]
+			})
+		});
+	} catch (error) {
+		console.error('Failed to send staff webhook:', error);
+	}
 }
 
 export async function sendEmailConfirmedEmail(pnid: mongoose.HydratedDocument<IPNID, IPNIDMethods>): Promise<void> {

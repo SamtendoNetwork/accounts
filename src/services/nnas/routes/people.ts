@@ -6,7 +6,7 @@ import moment from 'moment';
 import deviceCertificateMiddleware from '@/middleware/device-certificate';
 import { deviceRatelimit } from '@/middleware/ratelimit';
 import { connection as databaseConnection, doesPNIDExist, getPNIDProfileJSONByPID } from '@/database';
-import { getAgeFromDate, getValueFromHeaders, nintendoPasswordHash, sendConfirmationEmail, sendPNIDDeletedEmail } from '@/util';
+import { getAgeFromDate, getValueFromHeaders, nintendoPasswordHash, sendConfirmationEmail, sendPNIDDeletedEmail, sendStaffWebhook } from '@/util';
 import IP2LocationManager from '@/ip2location';
 import { PNID } from '@/models/pnid';
 import { NEXAccount } from '@/models/nex-account';
@@ -242,6 +242,7 @@ router.post('/', deviceRatelimit, deviceCertificateMiddleware, async (request: e
 		await session.endSession();
 	}
 
+	await sendStaffWebhook(pnid);
 	await sendConfirmationEmail(pnid);
 
 	response.send(xmlbuilder.create({
