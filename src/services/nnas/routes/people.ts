@@ -312,7 +312,7 @@ router.post('/@me/devices', async (request: express.Request, response: express.R
 	response.set('X-Nintendo-Date', new Date().getTime().toString());
 
 	// * We don't care about the device attributes
-	// * The console ignores them and PNIDs are not tied to consoles anyway
+	// * The console ignores them and SNIDs are not tied to consoles anyway
 	// * So the server also ignores them and does not save the ones posted here
 
 	// TODO - CHANGE THIS. WE NEED TO SAVE CONSOLE DETAILS !!!
