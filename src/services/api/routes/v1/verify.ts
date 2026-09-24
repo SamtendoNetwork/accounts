@@ -1,6 +1,5 @@
 import crypto from 'node:crypto';
 import express from 'express';
-import xmlbuilder from 'xmlbuilder';
 import { getPNIDByPID } from '@/database';
 import { getValueFromHeaders, sendResponse } from '@/util';
 import { IndependentServiceToken } from '@/models/independent-service-token';
@@ -15,22 +14,8 @@ const router = express.Router();
  * NOTE: This route does NOT give very sensitive information for user privacy reasons (such)
  */
 router.post('/service_token/check', async (request: express.Request, response: express.Response): Promise<void> => {
-	const pnid = request.pnid;
 	const server = request.server;
 	const token = getValueFromHeaders(request.headers, 'x-nintendo-service-token');
-	if (!server && pnid) {
-		response.status(400).send(xmlbuilder.create({
-			errors: {
-				error: {
-					cause: 'access_denied',
-					code: '0009',
-					message: 'This route is made NOT made for end user use.'
-				}
-			}
-		}).end());
-
-		return;
-	}
 
 	if (!server) {
 		await sendResponse(request, response, {
