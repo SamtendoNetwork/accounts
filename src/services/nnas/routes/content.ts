@@ -30,7 +30,7 @@ router.get('/agreements/:type/:region/:version', (request: express.Request, resp
 							'#cdata': 'Samtendo Network Services Agreement'
 						},
 						'agree_text': {
-							'#cdata': 'I accept'
+							'#cdata': 'I Accept'
 						},
 						'non_agree_text': {
 							'#cdata': 'I Decline'
