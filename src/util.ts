@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 import { S3 } from '@aws-sdk/client-s3';
 import fs from 'fs-extra';
+import xmlbuilder from 'xmlbuilder';
 import { CronJob } from 'cron';
 import { checkMarkedDeletions } from '@/database';
 import { sendMail, CreateEmail } from '@/mailer';
@@ -162,9 +163,7 @@ export async function sendConfirmationEmail(pnid: mongoose.HydratedDocument<IPNI
 	await sendMail(options);
 }
 
-export async function sendStaffWebhook(
-	pnid: mongoose.HydratedDocument<IPNID, IPNIDMethods>
-): Promise<void> {
+export async function sendStaffWebhook(pnid: mongoose.HydratedDocument<IPNID, IPNIDMethods>): Promise<void> {
 	const webhookURL = getWebhookURL();
 
 	if (!webhookURL) {
@@ -261,6 +260,7 @@ export async function sendPNIDDeletedEmail(emailAddress: string, username: strin
 		month: 'long',
 		day: 'numeric'
 	});
+
 	const email = new CreateEmail()
 		.addHeader('Dear {{pnid}}.', { pnid: username })
 		.addParagraph('Your SNID has been scheduled for deletion.')
@@ -311,6 +311,18 @@ export function getValueFromQueryString(qs: ParsedQs, key: string): string | und
 	}
 
 	return value;
+}
+
+export async function sendResponse(request: express.Request, response: express.Response, payload: any, statusCode: number): Promise<void> {
+	const contentType = getValueFromHeaders(request.headers, 'accept') || 'application/json';
+
+	if (contentType.includes('/xml')) {
+		response.set('Content-Type', 'text/xml');
+		response.status(statusCode).send(xmlbuilder.create(payload).end());
+	} else {
+		response.set('Content-Type', 'text/json');
+		response.status(statusCode).send(payload);
+	}
 }
 
 export function getValueFromHeaders(headers: IncomingHttpHeaders, key: string): string | undefined {
@@ -387,8 +399,7 @@ function scheduledTask(schedule: string, name: string, fn: () => void | Promise<
 		cronTime: schedule,
 		onTick: async () => {
 			try {
-				const result = fn();
-				await result;
+				await fn();
 			} catch (err) {
 				LOG_ERROR(`Error in schedule ${name}: ${err}`);
 			}

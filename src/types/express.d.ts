@@ -12,6 +12,7 @@ declare global {
 			files?: Record<string, any>;
 			certificate?: NintendoCertificate;
 			device?: HydratedDeviceDocument;
+			server: any;
 		}
 	}
 }

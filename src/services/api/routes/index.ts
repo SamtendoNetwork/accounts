@@ -5,10 +5,11 @@ import login_v1 from '@/services/api/routes/v1/login';
 import register_v1 from '@/services/api/routes/v1/register';
 import resetPassword_v1 from '@/services/api/routes/v1/resetPassword';
 import user_v1 from '@/services/api/routes/v1/user';
-
+import verify_v1 from '@/services/api/routes/v1/verify';
 export const V1 = {
 	CONNECTIONS: connections_v1,
 	EMAIL: email_v1,
+	VERIFY: verify_v1,
 	FORGOT_PASSWORD: forgotPassword_v1,
 	LOGIN: login_v1,
 	REGISTER: register_v1,
