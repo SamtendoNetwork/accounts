@@ -1,4 +1,5 @@
-# Samtendo Network accounts server
+# LEGACY Samtendo Network accounts server
+**Important! While this _is_ the current server used on Samtendo Network, no more contributions will be accepted as we move towards developing our own, original custom servers.**
 This server acts as a replacement for many of the account based services for the Wii U and 3DS. It replaces APIs for things such as Nintendo Network IDs, and also NASC for the 3DS.
 
 The accounts are called Samtendo Network IDs, or SNID for short. These allow you to authenticate with a large part of the network, connect to game servers on the Wii U, use Samverse, et cetera. On the 3DS, an SNID is not required to play online, however one is required to use Samverse.
